@@ -5,7 +5,10 @@ import com.example.maridodealuguel.repository.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/servicos")
@@ -30,7 +33,7 @@ public class ServicoController {
     }
 
     @GetMapping
-    public List<Servico> listar() {
+    public java.util.List<Servico> listar() {
         return servicoRepo.findAll();
     }
 
@@ -43,47 +46,88 @@ public class ServicoController {
 
     @PostMapping
     public ResponseEntity<Servico> criar(@RequestBody Map<String, Object> body) {
+        try {
+            Servico s = new Servico();
 
-        Servico s = new Servico();
+            // relacionamentos por id (se presentes)
+            Long clienteId = parseLong(body.get("clienteId"));
+            if (clienteId != null) s.setCliente(clienteRepo.findById(clienteId).orElse(null));
 
-        s.setCliente(clienteRepo.findById(Long.valueOf(body.get("clienteId").toString())).orElse(null));
-        s.setFuncionario(funcionarioRepo.findById(Long.valueOf(body.get("funcionarioId").toString())).orElse(null));
-        s.setAtividade(atividadeRepo.findById(Long.valueOf(body.get("atividadeId").toString())).orElse(null));
+            Long funcionarioId = parseLong(body.get("funcionarioId"));
+            if (funcionarioId != null) s.setFuncionario(funcionarioRepo.findById(funcionarioId).orElse(null));
 
-        s.setDescricao((String) body.get("descricao"));
-        s.setLocalExecucao((String) body.get("localExecucao"));
-        s.setCusto(Double.valueOf(body.get("custo").toString()));
+            Long atividadeId = parseLong(body.get("atividadeId"));
+            if (atividadeId != null) s.setAtividade(atividadeRepo.findById(atividadeId).orElse(null));
 
-        s.setDataServico(java.time.LocalDate.parse(body.get("dataServico").toString()));
-        s.setHoraInicio(java.time.LocalTime.parse(body.get("horaInicio").toString()));
-        s.setHoraFim(java.time.LocalTime.parse(body.get("horaFim").toString()));
+            // campos simples
+            s.setDescricao(asString(body.get("descricao")));
+            s.setLocalExecucao(asString(body.get("localExecucao")));
 
-        servicoRepo.save(s);
-        return ResponseEntity.ok(s);
+            Double custo = parseDouble(body.get("custo"));
+            if (custo != null) s.setCusto(custo);
+
+            LocalDate dataServico = parseDate(body.get("dataServico"));
+            if (dataServico != null) s.setDataServico(dataServico);
+
+            LocalTime horaInicio = parseTime(body.get("horaInicio"));
+            if (horaInicio != null) s.setHoraInicio(horaInicio);
+
+            LocalTime horaFim = parseTime(body.get("horaFim"));
+            if (horaFim != null) s.setHoraFim(horaFim);
+
+            Servico salvo = servicoRepo.save(s);
+            return ResponseEntity.ok(salvo);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Servico> editar(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        try {
+            Optional<Servico> optional = servicoRepo.findById(id);
+            if (optional.isEmpty()) return ResponseEntity.notFound().build();
 
-        Optional<Servico> optional = servicoRepo.findById(id);
-        if (optional.isEmpty()) return ResponseEntity.notFound().build();
+            Servico s = optional.get();
 
-        Servico s = optional.get();
+            Long clienteId = parseLong(body.get("clienteId"));
+            if (clienteId != null) s.setCliente(clienteRepo.findById(clienteId).orElse(null));
+            else if (body.containsKey("clienteId") && body.get("clienteId") == null) s.setCliente(null);
 
-        s.setCliente(clienteRepo.findById(Long.valueOf(body.get("clienteId").toString())).orElse(null));
-        s.setFuncionario(funcionarioRepo.findById(Long.valueOf(body.get("funcionarioId").toString())).orElse(null));
-        s.setAtividade(atividadeRepo.findById(Long.valueOf(body.get("atividadeId").toString())).orElse(null));
+            Long funcionarioId = parseLong(body.get("funcionarioId"));
+            if (funcionarioId != null) s.setFuncionario(funcionarioRepo.findById(funcionarioId).orElse(null));
+            else if (body.containsKey("funcionarioId") && body.get("funcionarioId") == null) s.setFuncionario(null);
 
-        s.setDescricao((String) body.get("descricao"));
-        s.setLocalExecucao((String) body.get("localExecucao"));
-        s.setCusto(Double.valueOf(body.get("custo").toString()));
+            Long atividadeId = parseLong(body.get("atividadeId"));
+            if (atividadeId != null) s.setAtividade(atividadeRepo.findById(atividadeId).orElse(null));
+            else if (body.containsKey("atividadeId") && body.get("atividadeId") == null) s.setAtividade(null);
 
-        s.setDataServico(java.time.LocalDate.parse(body.get("dataServico").toString()));
-        s.setHoraInicio(java.time.LocalTime.parse(body.get("horaInicio").toString()));
-        s.setHoraFim(java.time.LocalTime.parse(body.get("horaFim").toString()));
+            s.setDescricao(asString(body.get("descricao")));
+            s.setLocalExecucao(asString(body.get("localExecucao")));
 
-        servicoRepo.save(s);
-        return ResponseEntity.ok(s);
+            Double custo = parseDouble(body.get("custo"));
+            if (custo != null) s.setCusto(custo);
+
+            LocalDate dataServico = parseDate(body.get("dataServico"));
+            if (dataServico != null) s.setDataServico(dataServico);
+
+            LocalTime horaInicio = parseTime(body.get("horaInicio"));
+            if (horaInicio != null) s.setHoraInicio(horaInicio);
+
+            LocalTime horaFim = parseTime(body.get("horaFim"));
+            if (horaFim != null) s.setHoraFim(horaFim);
+
+            Servico salvo = servicoRepo.save(s);
+            return ResponseEntity.ok(salvo);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -91,5 +135,55 @@ public class ServicoController {
         if (!servicoRepo.existsById(id)) return ResponseEntity.notFound().build();
         servicoRepo.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // ---------- helpers ----------
+    private String asString(Object o) {
+        if (o == null) return null;
+        return o.toString();
+    }
+
+    private Long parseLong(Object o) {
+        if (o == null) return null;
+        try {
+            String s = o.toString();
+            if (s.isBlank()) return null;
+            return Long.valueOf(s);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid long");
+        }
+    }
+
+    private Double parseDouble(Object o) {
+        if (o == null) return null;
+        try {
+            String s = o.toString();
+            if (s.isBlank()) return null;
+            return Double.valueOf(s);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid double");
+        }
+    }
+
+    private LocalDate parseDate(Object o) {
+        if (o == null) return null;
+        try {
+            String s = o.toString();
+            if (s.isBlank()) return null;
+            return LocalDate.parse(s);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid date");
+        }
+    }
+
+    private LocalTime parseTime(Object o) {
+        if (o == null) return null;
+        try {
+            String s = o.toString();
+            if (s.isBlank()) return null;
+            return LocalTime.parse(s);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid time");
+        }
     }
 }
