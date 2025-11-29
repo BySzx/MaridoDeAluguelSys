@@ -1,0 +1,12 @@
+# Java / Maven
+target/
+*.log
+*.class
+.vscode/
+.idea/
+*.iml
+
+# Node / React
+node_modules/
+build/
+.env
