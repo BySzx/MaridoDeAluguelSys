@@ -1,205 +1,184 @@
----
+Sistema Marido de Aluguel (Spring Boot + React + MySQL/XAMPP)
+📌 Descrição do Projeto
 
-# **Marido de Aluguel – Sistema Completo (Spring Boot + React)**
+Este projeto é um sistema completo para gerenciamento de serviços de um negócio do tipo "Marido de Aluguel", incluindo:
 
-Aplicação completa para gerenciamento de serviços de “Marido de Aluguel”, com **CRUD de Clientes, Funcionários, Atividades e Serviços**, integração total **backend + frontend**, e interface construída em **React + Bootstrap**.
+Cadastro de Clientes
 
-Backend em **Spring Boot** e Frontend em **React**, totalmente integrados e rodando em um único projeto.
+Cadastro de Funcionários
 
----
+Cadastro de Atividades
 
-## 🚀 **Tecnologias**
+Cadastro e controle de Serviços
 
-### **Backend**
+Relacionamentos completos entre as entidades
 
-* Java 17+
-* Spring Boot
-* Spring Web
-* Spring Data JPA
-* H2 / MySQL (dependendo do ambiente)
-* Maven
+Interface moderna em React + Bootstrap
 
-### **Frontend**
+API REST em Spring Boot
 
-* React + React Router
-* Bootstrap
-* Axios
+Banco de dados MySQL via XAMPP
 
----
+Integração total frontend + backend
 
-## 📁 **Estrutura do Projeto**
+🧱 Arquitetura
 
-```
-marido-de-aluguel/
-│
-├── m-a-frontend/          # Aplicação React
-│   ├── public/
-│   └── src/
-│
-├── src/main/java/         # Backend Spring Boot
-│   └── com/example/maridodealuguel/
-│
-├── src/main/resources/    # static/ recebe o build do React
-│
-└── pom.xml                # Integração Maven + frontend
-```
+Backend: Spring Boot 4, Spring Data JPA, Hibernate, MySQL, HikariCP
 
----
+Frontend: React com React Router, Bootstrap e consumo da API via fetch
 
-## 🛠️ **Funcionalidades**
+Banco: MySQL (XAMPP)
 
-### ✔️ **Clientes**
+Padrão: CRUD completo para todas as entidades.
 
-* Cadastrar
-* Editar
-* Listar
-* Excluir
-* Ver detalhes
+🛠️ Tecnologias Utilizadas
+Backend
 
-### ✔️ **Funcionários**
+Java 25
 
-* Cadastrar
-* Editar
-* Listar
-* Excluir
-* Ver detalhes
+Spring Boot 4 (Web, JPA, Validation)
 
-### ✔️ **Atividades**
+Hibernate ORM
 
-* CRUD completo
+MySQL Connector
 
-### ✔️ **Serviços**
+HikariCP
 
-* CRUD completo
-* Relacionamento com Funcionário
-* Página de detalhes
-* Formulários com loading
+Maven
 
----
+Frontend
 
-## ▶️ **Como rodar o Backend**
+React 18
 
-Rodar via IntelliJ:
+React Router DOM
 
-```
-Abrir → MaridoDeAluguelApplication → botão verde (Run)
-```
+Bootstrap
 
-Rodar via Maven (caso tenha Maven instalado):
+Fetch API
 
-```bash
-mvn spring-boot:run
-```
+📦 Como Rodar o Backend
+✔️ 1. Iniciar o MySQL via XAMPP
 
-O backend sobe em:
+Abra o XAMPP Control Panel
 
-```
+Inicie somente:
+
+MySQL
+
+Apache (opcional, só se quiser phpMyAdmin)
+
+Acesse phpMyAdmin:
+
+http://localhost/phpmyadmin
+
+✔️ 2. Criar o banco de dados
+
+No phpMyAdmin → SQL:
+
+CREATE DATABASE marido_de_aluguel;
+
+✔️ 3. Configurar o Spring Boot
+
+Arquivo:
+src/main/resources/application.properties
+
+spring.datasource.url=jdbc:mysql://localhost:3306/marido_de_aluguel
+spring.datasource.username=root
+spring.datasource.password=
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+✔️ 4. Instalar a dependência do MySQL
+
+No pom.xml:
+
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.1.0</version>
+</dependency>
+
+✔️ 5. Rodar o backend
+
+Pelo IntelliJ:
+
+MaridoDeAluguelApplication.java → Run
+
+A API subirá em:
+
 http://localhost:8080
-```
 
----
-
-## ▶️ **Como rodar o Frontend (modo desenvolvimento)**
-
-Dentro de `m-a-frontend`:
-
-```bash
-npm install
-npm start
-```
-
-Frontend:
-
-```
-http://localhost:3000
-```
-
----
-
-## 🔥 **Rodar tudo integrado (produção)**
-
-O build do React vai para `src/main/resources/static`, e o Spring Boot serve tudo pela porta 8080.
-
-### 1) Gerar o build do React
-
-```bash
+🖥️ Como Rodar o Frontend
+✔️ 1. Acesse o diretório do frontend
 cd m-a-frontend
-npm run build
-cd ..
-```
 
-### 2) Rodar o backend
+✔️ 2. Instale as dependências
+npm install
 
-```bash
-mvn spring-boot:run
-```
+✔️ 3. Rode o servidor de desenvolvimento
+npm start
 
-Sistema completo estará em:
 
-```
-http://localhost:8080
-```
+O frontend abrirá automaticamente em:
 
----
+http://localhost:3000
 
-## 🧱 **Build completo do projeto**
+🔌 Endpoints Principais (API)
+Clientes
+Método	Rota	Descrição
+GET	/clientes	Lista clientes
+POST	/clientes	Cria cliente
+GET	/clientes/{id}	Detalhes
+PUT	/clientes/{id}	Edita
+DELETE	/clientes/{id}	Exclui
+Funcionários
+Método	Rota
+GET /funcionarios	
+POST /funcionarios	
+PUT /funcionarios/{id}	
+DELETE /funcionarios/{id}	
+Atividades
+Método	Rota
+GET /atividades	
+POST /atividades	
+PUT /atividades/{id}	
+Serviços (com relações)
+Método	Rota
+GET /servicos	
+POST /servicos	
+GET /servicos/{id}	
+PUT /servicos/{id}	
+DELETE /servicos/{id}	
+🧪 Dados de Teste (seed opcional)
 
-```bash
-mvn clean package
-```
+Você pode popular o banco rodando estes comandos:
 
-Gera o `.jar` com frontend embutido.
+curl -X POST http://localhost:8080/clientes -H "Content-Type: application/json" -d "{\"nome\":\"João Silva\",\"telefone\":\"9999-0000\",\"email\":\"joao@mail.com\",\"cpf\":\"123\",\"endereco\":\"Rua A\"}"
 
----
 
-## 🧪 **Endpoints principais**
+(mais comandos de seed podem ser adicionados)
 
-### Clientes
+🎨 Funcionalidades do Frontend
 
-| Método | Endpoint       |
-| ------ | -------------- |
-| GET    | /clientes      |
-| GET    | /clientes/{id} |
-| POST   | /clientes      |
-| PUT    | /clientes/{id} |
-| DELETE | /clientes/{id} |
+Menu completo (Clientes, Funcionários, Atividades, Serviços)
 
-### Funcionários
+Formulários com Bootstrap (validação + required)
 
-| Método | Endpoint           |
-| ------ | ------------------ |
-| GET    | /funcionarios      |
-| GET    | /funcionarios/{id} |
-| POST   | /funcionarios      |
-| PUT    | /funcionarios/{id} |
-| DELETE | /funcionarios/{id} |
+Listagens com tabelas limpas
 
-### Atividades
+Botão de editar/excluir em todas as páginas
 
-| Método | Endpoint         |
-| ------ | ---------------- |
-| GET    | /atividades      |
-| GET    | /atividades/{id} |
-| POST   | /atividades      |
-| PUT    | /atividades/{id} |
-| DELETE | /atividades/{id} |
+Formulário de serviço com seleção:
 
-### Serviços
+Cliente
 
-| Método | Endpoint       |
-| ------ | -------------- |
-| GET    | /servicos      |
-| GET    | /servicos/{id} |
-| POST   | /servicos      |
-| PUT    | /servicos/{id} |
-| DELETE | /servicos/{id} |
+Funcionário
 
----
+Atividade
 
-## 🧑‍💻 **Autor**
-
-**Alexandre Leite**
-Projeto desenvolvido para estudo, prática e portfólio.
-
----
-
+Tela de detalhes do serviço
